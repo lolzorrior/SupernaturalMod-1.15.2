@@ -1,16 +1,15 @@
 package com.lolzorrior.supernaturalmod;
 
 
+import com.lolzorrior.supernaturalmod.capabilities.PowerProvider;
+import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassesProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -27,12 +26,14 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Collectors;
 
+
 @Mod(SupernaturalMod.MOD_ID)
 public class SupernaturalMod {
     public static final String MOD_ID = "supernaturalmod";
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ResourceLocation POWER_CAP = new ResourceLocation(SupernaturalMod.MOD_ID, "power");
+    public static final ResourceLocation SUPERNATURAL_CLASS = new ResourceLocation(SupernaturalMod.MOD_ID, "class");
 
     public SupernaturalMod() {
         // Register the setup method for modloading
@@ -100,6 +101,7 @@ public class SupernaturalMod {
         public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
             if (!(event.getObject() instanceof PlayerEntity)) return;
             event.addCapability(POWER_CAP, new PowerProvider());
+            event.addCapability(SUPERNATURAL_CLASS, new SupernaturalClassesProvider());
             LOGGER.info("Capabilities attached");
         }
     }

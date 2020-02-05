@@ -1,4 +1,4 @@
-package com.lolzorrior.supernaturalmod;
+package com.lolzorrior.supernaturalmod.capabilities;
 
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;

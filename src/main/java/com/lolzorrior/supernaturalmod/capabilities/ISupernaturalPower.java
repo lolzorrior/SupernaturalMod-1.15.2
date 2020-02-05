@@ -1,4 +1,4 @@
-package com.lolzorrior.supernaturalmod;
+package com.lolzorrior.supernaturalmod.capabilities;
 
 public interface ISupernaturalPower {
     void consume(int points);

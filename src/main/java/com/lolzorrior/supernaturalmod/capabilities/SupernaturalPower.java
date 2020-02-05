@@ -1,4 +1,4 @@
-package com.lolzorrior.supernaturalmod;
+package com.lolzorrior.supernaturalmod.capabilities;
 
 public class SupernaturalPower implements ISupernaturalPower {
     private int power = 0;
