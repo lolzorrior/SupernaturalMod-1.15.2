@@ -45,19 +45,14 @@ public class ForgeEventSubscriber {
         power.fill(50);
         player.sendMessage(new StringTextComponent("Updated Power: " + (power.getPower())));
         player.sendMessage(new StringTextComponent("Your class is " + supernaturalClass.getSupernaturalClass()));
-
     }
 
     @SubscribeEvent
     public static void onPlayerEatsFlesh(Finish event)
     {
-        ISupernaturalClass playersClass = SupernaturalClass.getDefaultClass();
-
         LivingEntity currentPlayer = event.getEntityLiving();
         LazyOptional<ISupernaturalClass> optional = currentPlayer.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS, null);
-        if (optional.isPresent()) {
-            playersClass = optional.orElse(SupernaturalClass.getDefaultClass());
-        }
+        ISupernaturalClass playersClass = optional.orElse(SupernaturalClass.getDefaultClass());
 
         if (new ItemStack(Items.ROTTEN_FLESH).equals(event.getItem()) && "Human".equals(playersClass.getSupernaturalClass())) {
             playersClass.setSupernaturalClass("Zombie");
