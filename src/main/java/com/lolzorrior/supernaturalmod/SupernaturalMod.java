@@ -101,29 +101,28 @@ public class SupernaturalMod {
             // register a new block here
             LOGGER.info("HELLO from Register Block");
         }
-
-        @SubscribeEvent
-        public static void onPlayerEatsFlesh(LivingEntityUseItemEvent.Finish event) {
-            LivingEntity currentPlayer = event.getEntityLiving();
-            LazyOptional<ISupernaturalClass> optional = currentPlayer.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS, null);
-            ISupernaturalClass playersClass = optional.orElse(new SupernaturalClass());
-
-            if (new ItemStack(Items.ROTTEN_FLESH).equals(event.getItem()) && "Human".equals(playersClass.getSupernaturalClass())) {
-                playersClass.setSupernaturalClass("Zombie");
-                currentPlayer.sendMessage(new StringTextComponent("You feel yourself turn."));
-                currentPlayer.sendMessage(new StringTextComponent("You are now a " + playersClass.getSupernaturalClass()));
-            }
-        }
     }
 
     @Mod.EventBusSubscriber()
-    public static class capabilityAttacher {
+    public static class ModEventSubscriber {
         @SubscribeEvent
         public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
             if (!(event.getObject() instanceof PlayerEntity)) return;
             event.addCapability(POWER_CAP, new SupernaturalPowerProvider());
             event.addCapability(SUPERNATURAL_CLASS, new SupernaturalClassProvider());
             LOGGER.info("Capabilities attached");
+        }
+        @SubscribeEvent
+        public static void onPlayerEatsFlesh(LivingEntityUseItemEvent.Finish event) {
+            LivingEntity currentPlayer = event.getEntityLiving();
+            LazyOptional<ISupernaturalClass> optional = currentPlayer.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS, null);
+            ISupernaturalClass playersClass = optional.orElse(new SupernaturalClass());
+
+            if (new ItemStack(Items.ROTTEN_FLESH).isItemEqual(event.getItem()) && "Human".equals(playersClass.getSupernaturalClass())) { //Seems to find human everytime
+                playersClass.setSupernaturalClass("Zombie");
+                currentPlayer.sendMessage(new StringTextComponent("You feel yourself turn."));
+                currentPlayer.sendMessage(new StringTextComponent("You are now a " + playersClass.getSupernaturalClass()));
+            }
         }
     }
 }
