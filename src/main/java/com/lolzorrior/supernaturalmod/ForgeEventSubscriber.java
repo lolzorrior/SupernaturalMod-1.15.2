@@ -8,9 +8,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Finish;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,7 +24,7 @@ public class ForgeEventSubscriber {
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         //Register our Capability
-        CapabilityManager.INSTANCE.register(ISupernaturalPower.class, new PowerStorage(), SupernaturalPower::new);
+        CapabilityManager.INSTANCE.register(ISupernaturalPower.class, new SupernaturalPowerStorage(), SupernaturalPower::new);
         CapabilityManager.INSTANCE.register(ISupernaturalClass.class, new SupernaturalClassStorage(), SupernaturalClass::new);
         LOGGER.info("Capabilities registered");
     }
@@ -34,7 +32,7 @@ public class ForgeEventSubscriber {
     @SubscribeEvent
     public static void onPlayerLogsIn(PlayerLoggedInEvent event) {
         PlayerEntity player = event.getPlayer();
-        LazyOptional<ISupernaturalPower> spowerCapability = player.getCapability(PowerProvider.POWER_CAP);
+        LazyOptional<ISupernaturalPower> spowerCapability = player.getCapability(SupernaturalPowerProvider.POWER_CAP);
         ISupernaturalPower power = spowerCapability.orElse(new SupernaturalPower());
 
         LazyOptional<ISupernaturalClass> sclassCapability = player.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS);

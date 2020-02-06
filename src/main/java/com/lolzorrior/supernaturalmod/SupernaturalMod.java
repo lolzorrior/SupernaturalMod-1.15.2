@@ -1,7 +1,7 @@
 package com.lolzorrior.supernaturalmod;
 
 
-import com.lolzorrior.supernaturalmod.capabilities.PowerProvider;
+import com.lolzorrior.supernaturalmod.capabilities.SupernaturalPowerProvider;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -100,7 +100,7 @@ public class SupernaturalMod {
         @SubscribeEvent
         public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
             if (!(event.getObject() instanceof PlayerEntity)) return;
-            event.addCapability(POWER_CAP, new PowerProvider());
+            event.addCapability(POWER_CAP, new SupernaturalPowerProvider());
             event.addCapability(SUPERNATURAL_CLASS, new SupernaturalClassProvider());
             LOGGER.info("Capabilities attached");
         }
