@@ -24,8 +24,7 @@ public class ForgeEventSubscriber {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @SubscribeEvent
-    public static void onCommonSetup(FMLCommonSetupEvent event)
-    {
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
         //Register our Capability
         CapabilityManager.INSTANCE.register(ISupernaturalPower.class, new PowerStorage(), SupernaturalPower::new);
         CapabilityManager.INSTANCE.register(ISupernaturalClass.class, new SupernaturalClassStorage(), SupernaturalClass::new);
@@ -48,8 +47,7 @@ public class ForgeEventSubscriber {
     }
 
     @SubscribeEvent
-    public static void onPlayerEatsFlesh(Finish event)
-    {
+    public static void onPlayerEatsFlesh(Finish event) {
         LivingEntity currentPlayer = event.getEntityLiving();
         LazyOptional<ISupernaturalClass> optional = currentPlayer.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS, null);
         ISupernaturalClass playersClass = optional.orElse(SupernaturalClass.getDefaultClass());
