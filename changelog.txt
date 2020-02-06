@@ -1,3 +1,97 @@
+Build: 1.15.2-31.1.0 - Mon Feb 03 21:24:29 GMT 2020
+	lex:
+		Fix a small patch misalignment.
+
+=========
+Build: 1.15.2-31.0.19 - Mon Feb 03 20:52:28 GMT 2020
+	richard:
+		Add FluidStack support to the Forge packet buffer. (#6353) (#6485)
+
+	richard:
+		Make Minecarts work with modded powered/activator rails. (#6486)
+		
+		Re-adds functionality for rails to have different maximum speeds.
+
+=========
+Build: 1.15.2-31.0.17 - Mon Feb 03 20:21:20 GMT 2020
+	ichttt:
+		Revert game data to frozen on disconnect from a remote server or when terminating a local server. Closes #6487 (#6497)
+
+=========
+Build: 1.15.2-31.0.16 - Sun Feb 02 22:11:19 GMT 2020
+	David Quintana:
+		Remove unintended changes.
+
+=========
+Build: 1.15.2-31.0.15 - Sun Feb 02 22:03:15 GMT 2020
+	David Quintana:
+		Implement fluid overlay texture rendering for custom fluids.
+
+=========
+Build: 1.15.2-31.0.14 - Thu Jan 30 06:12:15 GMT 2020
+	DaemonUmbra:
+		Fixed Attacks/Punches not Registering (#6481)
+		
+		Replaced incorrect magic number with constant
+
+=========
+Build: 1.15.2-31.0.13 - Wed Jan 29 23:46:30 GMT 2020
+	williewillus:
+		Clean up a bunch of render events (#6444)
+		
+		* Delete RenderHandEvent as RenderSpecificHandEvent can do everything it does and more. Rename RenderSpecificHandEvent to RenderHandEvent as it's now the only hand rendering event.
+		* Pass MatrixStack and IRenderTypeBuffer into the event whenever they are available. If they're available, that means we're in a batching environment and the modder should not be using the tessellator or other buffers on their own, or they risk "Already building" crashes.
+
+=========
+Build: 1.15.2-31.0.12 - Wed Jan 29 21:55:18 GMT 2020
+	Barteks2x:
+		Fix NullPointerException on java 8u242 in dev environment. (#6473)
+		
+		Java 8u242 no longer re-initializes internal sys_paths and usr_paths fields in loadLibrary when they are null, so the value can't be set to null.
+
+=========
+Build: 1.15.2-31.0.11 - Wed Jan 29 21:18:05 GMT 2020
+	12281102+Aeltumn:
+		Fix RightClickBlock code differences between client and server implementation (#6451)
+
+	williewillus:
+		Fix incorrectly ported patch for restoreBlurMipmap (#6450)
+
+=========
+Build: 1.15.2-31.0.9 - Wed Jan 29 21:11:24 GMT 2020
+	40495288+Yamahari:
+		Defer material getting for ChestTileEntityRenderer into seperate function (#6465)
+
+=========
+Build: 1.15.2-31.0.8 - Wed Jan 29 21:04:44 GMT 2020
+	37298044+Cadiboo:
+		Small Forge config fixes (#6466)
+
+=========
+Build: 1.15.2-31.0.7 - Wed Jan 29 20:50:44 GMT 2020
+	lex:
+		Fix PlayerChangedDimensionEvent using incorrect from dimension argument in ServerPlayerEntity.teleport. Closes #6457
+
+	lex:
+		Fix incorrect keybinding modifiers patch. Closes #6478
+
+	lex:
+		Fix ChunkDataEvent.Load not firing, it now fires in the aync thread. Be careful. Closes #6471
+
+=========
+Build: 1.15.2-31.0.4 - Wed Jan 29 19:31:50 GMT 2020
+	lex:
+		Fix WakeupEvent patch misalign. Closes #6474
+
+	lex:
+		Fix default mod resources loosing it's sort order.
+
+=========
+Build: 1.15.2-31.0.2 - Wed Jan 29 17:26:58 GMT 2020
+	goto.minecraft:
+		[1.15] Reimplemented the ITeleporter interface (#6404)
+
+=========
 Build: 1.15.2-31.0.1 - Thu Jan 23 21:59:18 GMT 2020
 	David Quintana:
 		Hook "gui_light" value from the model into the IBakedModel implementations.

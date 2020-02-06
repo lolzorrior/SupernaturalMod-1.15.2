@@ -40,6 +40,11 @@ public class ForgeEventSubscriber {
     @SubscribeEvent
     public static void onPlayerEatsFlesh(LivingEntityUseItemEvent.Finish event)
     {
-        if (event.getItem() == Items.ROTTEN_FLESH )
+        String modClass;
+        event.getEntityLiving().getCapability(SupernaturalClassesProvider.SUPERNATURAL_CLASS).ifPresent(supernaturalClasses -> modClasses = supernaturalClasses.get());
+        if (event.getItem() == new ItemStack(Items.ROTTEN_FLESH) && modClass == "Human")
+        {
+            event.getEntityLiving().getCapability(SupernaturalClassesProvider.SUPERNATURAL_CLASS).ifPresent(supernaturalClasses -> supernaturalClasses.set("Zombie"));
+        }
     }
 }
