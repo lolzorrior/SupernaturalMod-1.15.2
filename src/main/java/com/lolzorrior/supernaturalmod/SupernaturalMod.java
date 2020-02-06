@@ -1,15 +1,23 @@
 package com.lolzorrior.supernaturalmod;
 
 
+import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
+import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalPowerProvider;
 import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -92,6 +100,19 @@ public class SupernaturalMod {
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             // register a new block here
             LOGGER.info("HELLO from Register Block");
+        }
+
+        @SubscribeEvent
+        public static void onPlayerEatsFlesh(LivingEntityUseItemEvent.Finish event) {
+            LivingEntity currentPlayer = event.getEntityLiving();
+            LazyOptional<ISupernaturalClass> optional = currentPlayer.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS, null);
+            ISupernaturalClass playersClass = optional.orElse(new SupernaturalClass());
+
+            if (new ItemStack(Items.ROTTEN_FLESH).equals(event.getItem()) && "Human".equals(playersClass.getSupernaturalClass())) {
+                playersClass.setSupernaturalClass("Zombie");
+                currentPlayer.sendMessage(new StringTextComponent("You feel yourself turn."));
+                currentPlayer.sendMessage(new StringTextComponent("You are now a " + playersClass.getSupernaturalClass()));
+            }
         }
     }
 

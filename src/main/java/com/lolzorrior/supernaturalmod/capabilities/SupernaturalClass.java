@@ -3,7 +3,7 @@ package com.lolzorrior.supernaturalmod.capabilities;
 public class SupernaturalClass implements ISupernaturalClass {
     private String supernaturalClass;
 
-    public SupernaturalClass(){
+    public SupernaturalClass() {
         supernaturalClass = "Human";
     }
 
@@ -16,5 +16,4 @@ public class SupernaturalClass implements ISupernaturalClass {
     public String getSupernaturalClass() {
         return supernaturalClass;
     }
-
 }
