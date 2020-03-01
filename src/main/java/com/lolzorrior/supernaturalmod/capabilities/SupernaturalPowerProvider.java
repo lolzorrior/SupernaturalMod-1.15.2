@@ -15,11 +15,18 @@ public class SupernaturalPowerProvider implements ICapabilitySerializable<INBT> 
     public static final Capability<ISupernaturalPower> POWER_CAP = null;
     private LazyOptional<ISupernaturalPower> instance = LazyOptional.of(POWER_CAP::getDefaultInstance);
 
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == POWER_CAP ? instance.cast() : LazyOptional.empty();
+        if (cap == POWER_CAP) {
+            return instance.cast();
+        } else {
+            return LazyOptional.empty();
+        }
     }
+
+
 
     @Nonnull
     @Override

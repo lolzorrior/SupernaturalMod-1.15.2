@@ -1,10 +1,7 @@
 package com.lolzorrior.supernaturalmod;
 
 
-import com.lolzorrior.supernaturalmod.capabilities.ISupernaturalClass;
-import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClass;
-import com.lolzorrior.supernaturalmod.capabilities.SupernaturalPowerProvider;
-import com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassProvider;
+import com.lolzorrior.supernaturalmod.capabilities.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
@@ -14,10 +11,13 @@ import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -107,22 +108,48 @@ public class SupernaturalMod {
     public static class ModEventSubscriber {
         @SubscribeEvent
         public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-            if (!(event.getObject() instanceof PlayerEntity)) return;
-            event.addCapability(POWER_CAP, new SupernaturalPowerProvider());
-            event.addCapability(SUPERNATURAL_CLASS, new SupernaturalClassProvider());
+            int n = 1;
+            if (!(event.getObject() instanceof PlayerEntity)) {return;}
+            PlayerEntity player = (PlayerEntity) event.getObject();
+            //if (player.getCapability(SupernaturalPowerProvider.POWER_CAP) != null && player.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS) != null){
+                event.addCapability(POWER_CAP, new SupernaturalPowerProvider());
+                event.addCapability(SUPERNATURAL_CLASS, new SupernaturalClassProvider());
+                LOGGER.info("Capability attached count: " + n++);
+            //}
             LOGGER.info("Capabilities attached");
         }
         @SubscribeEvent
         public static void onPlayerEatsFlesh(LivingEntityUseItemEvent.Finish event) {
             LivingEntity currentPlayer = event.getEntityLiving();
             LazyOptional<ISupernaturalClass> optional = currentPlayer.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS, null);
-            ISupernaturalClass playersClass = optional.orElse(new SupernaturalClass());
+            ISupernaturalClass playersClass = optional.orElseThrow(NullPointerException::new);
 
-            if (new ItemStack(Items.ROTTEN_FLESH).isItemEqual(event.getItem()) && "Human".equals(playersClass.getSupernaturalClass())) { //Seems to find human everytime
+            LazyOptional<ISupernaturalPower> spowerCapability = currentPlayer.getCapability(SupernaturalPowerProvider.POWER_CAP);
+            ISupernaturalPower power = spowerCapability.orElseThrow(NullPointerException::new);
+
+            if (new ItemStack(Items.ROTTEN_FLESH).isItemEqual(event.getItem()) && playersClass.getSupernaturalClass() == "Human") { //Seems to find human everytime
                 playersClass.setSupernaturalClass("Zombie");
                 currentPlayer.sendMessage(new StringTextComponent("You feel yourself turn."));
                 currentPlayer.sendMessage(new StringTextComponent("You are now a " + playersClass.getSupernaturalClass()));
             }
+
+            else if (new ItemStack(Items.ROTTEN_FLESH).isItemEqual(event.getItem()) && playersClass.getSupernaturalClass() == "Zombie") {
+                power.fill(50);
+                currentPlayer.sendMessage(new StringTextComponent("Updated Power: " + (power.getPower())));
+            }
         }
+        /*@SubscribeEvent
+        public static void onPlayerClone(PlayerEvent.Clone event){
+            LazyOptional<ISupernaturalClass> oldClass = event.getOriginal().getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS);
+            LazyOptional<ISupernaturalClass> newClass = event.getPlayer().getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS);
+            LazyOptional<ISupernaturalPower> oldPower = event.getOriginal().getCapability(SupernaturalPowerProvider.POWER_CAP);
+            LazyOptional<ISupernaturalPower> newPower = event.getPlayer().getCapability(SupernaturalPowerProvider.POWER_CAP);
+
+            //ISupernaturalClass oClass = oldCinst.orElse(new SupernaturalClass());
+            //ISupernaturalPower oPower = oldPinst.orElse(new SupernaturalPower());
+            //ISupernaturalClass nClass = newCinst.orElse(new SupernaturalClass());
+            //ISupernaturalPower nPower = newPinst.orElse(new SupernaturalPower());
+            //event.getPlayer().sendMessage(new StringTextComponent("Player Cloned! New Class:" + newClass.getSupernaturalClass()));
+        }*/
     }
 }

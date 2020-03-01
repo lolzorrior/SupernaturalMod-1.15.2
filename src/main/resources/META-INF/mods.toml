@@ -38,11 +38,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magn
 
 [[mods]]
 modId="supernaturalmod"
-version=".1"
-displayName="Supernatural Mod"
-description='''
-Gross
-=======
 version="${file.jarVersion}"
 displayName="Supernatural Mod"
 description='''

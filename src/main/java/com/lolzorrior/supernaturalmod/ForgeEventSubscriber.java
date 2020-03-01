@@ -9,6 +9,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Finish;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,17 +34,17 @@ public class ForgeEventSubscriber {
     public static void onPlayerLogsIn(PlayerLoggedInEvent event) {
         PlayerEntity player = event.getPlayer();
         LazyOptional<ISupernaturalPower> spowerCapability = player.getCapability(SupernaturalPowerProvider.POWER_CAP);
-        ISupernaturalPower power = spowerCapability.orElse(new SupernaturalPower());
+        ISupernaturalPower power = spowerCapability.orElseThrow(NullPointerException::new);
 
         LazyOptional<ISupernaturalClass> sclassCapability = player.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS);
-        ISupernaturalClass supernaturalClass = sclassCapability.orElse(new SupernaturalClass());
+        ISupernaturalClass supernaturalClass = sclassCapability.orElseThrow(NullPointerException::new);
 
         player.sendMessage(new StringTextComponent("Welcome, your power is " + (power.getPower())));
         power.fill(50);
         player.sendMessage(new StringTextComponent("Updated Power: " + (power.getPower())));
         player.sendMessage(new StringTextComponent("Your class is " + supernaturalClass.getSupernaturalClass()));
     }
-
+/*
     @SubscribeEvent
     public static void onPlayerEatsFlesh(Finish event) {
         LivingEntity currentPlayer = event.getEntityLiving();
@@ -54,5 +55,5 @@ public class ForgeEventSubscriber {
             playersClass.setSupernaturalClass("Zombie");
             currentPlayer.sendMessage(new StringTextComponent("Your class is " + playersClass.getSupernaturalClass()));
         }
-    }
+    }*/
 }
