@@ -1,23 +1,12 @@
 package com.lolzorrior.supernaturalmod;
 
 
-import com.lolzorrior.supernaturalmod.capabilities.*;
+import com.lolzorrior.supernaturalmod.networking.supernaturalPacketHndler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -27,12 +16,10 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraft.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -41,28 +28,25 @@ public class SupernaturalMod {
     public static final String MOD_ID = "supernaturalmod";
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final ResourceLocation POWER_CAP = new ResourceLocation(SupernaturalMod.MOD_ID, "power");
-    public static final ResourceLocation SUPERNATURAL_CLASS = new ResourceLocation(SupernaturalMod.MOD_ID, "class");
+    public static final ResourceLocation SUPER_CLASS = new ResourceLocation(MOD_ID, "superclass");
 
     public SupernaturalMod() {
-        // Register the setup method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        // Register the enqueueIMC method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-        // Register the processIMC method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-        // Register the doClientStuff method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeEventSubscriber::onCommonSetup);
+        MinecraftForge.EVENT_BUS.register(new ForgeEventSubscriber());
+        supernaturalPacketHndler.register();
     }
 
-    private void setup(final FMLCommonSetupEvent event) {
+    private void setup(FMLCommonSetupEvent event) {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        LOGGER.info("Capabilities registered");
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -93,6 +77,7 @@ public class SupernaturalMod {
     }
 
 
+
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -104,40 +89,10 @@ public class SupernaturalMod {
         }
     }
 
-    @Mod.EventBusSubscriber()
-    public static class ModEventSubscriber {
-        @SubscribeEvent
-        public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-            int n = 1;
-            if (!(event.getObject() instanceof PlayerEntity)) {return;}
-            PlayerEntity player = (PlayerEntity) event.getObject();
-            //if (player.getCapability(SupernaturalPowerProvider.POWER_CAP) != null && player.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS) != null){
-                event.addCapability(POWER_CAP, new SupernaturalPowerProvider());
-                event.addCapability(SUPERNATURAL_CLASS, new SupernaturalClassProvider());
-                LOGGER.info("Capability attached count: " + n++);
-            //}
-            LOGGER.info("Capabilities attached");
-        }
-        @SubscribeEvent
-        public static void onPlayerEatsFlesh(LivingEntityUseItemEvent.Finish event) {
-            LivingEntity currentPlayer = event.getEntityLiving();
-            LazyOptional<ISupernaturalClass> optional = currentPlayer.getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS, null);
-            ISupernaturalClass playersClass = optional.orElseThrow(NullPointerException::new);
+    //@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+    //public static class ModEventSubscriber {
 
-            LazyOptional<ISupernaturalPower> spowerCapability = currentPlayer.getCapability(SupernaturalPowerProvider.POWER_CAP);
-            ISupernaturalPower power = spowerCapability.orElseThrow(NullPointerException::new);
 
-            if (new ItemStack(Items.ROTTEN_FLESH).isItemEqual(event.getItem()) && playersClass.getSupernaturalClass() == "Human") { //Seems to find human everytime
-                playersClass.setSupernaturalClass("Zombie");
-                currentPlayer.sendMessage(new StringTextComponent("You feel yourself turn."));
-                currentPlayer.sendMessage(new StringTextComponent("You are now a " + playersClass.getSupernaturalClass()));
-            }
-
-            else if (new ItemStack(Items.ROTTEN_FLESH).isItemEqual(event.getItem()) && playersClass.getSupernaturalClass() == "Zombie") {
-                power.fill(50);
-                currentPlayer.sendMessage(new StringTextComponent("Updated Power: " + (power.getPower())));
-            }
-        }
         /*@SubscribeEvent
         public static void onPlayerClone(PlayerEvent.Clone event){
             LazyOptional<ISupernaturalClass> oldClass = event.getOriginal().getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS);
@@ -151,5 +106,5 @@ public class SupernaturalMod {
             //ISupernaturalPower nPower = newPinst.orElse(new SupernaturalPower());
             //event.getPlayer().sendMessage(new StringTextComponent("Player Cloned! New Class:" + newClass.getSupernaturalClass()));
         }*/
-    }
+    //}
 }

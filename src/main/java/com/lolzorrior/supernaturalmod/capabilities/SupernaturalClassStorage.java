@@ -1,5 +1,6 @@
 package com.lolzorrior.supernaturalmod.capabilities;
 
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.Direction;
@@ -12,11 +13,16 @@ public class SupernaturalClassStorage implements IStorage<ISupernaturalClass> {
     @Nullable
     @Override
     public INBT writeNBT(Capability<ISupernaturalClass> capability, ISupernaturalClass instance, Direction side) {
-        return StringNBT.func_229705_a_(instance.getSupernaturalClass());
+        final CompoundNBT compoundNBT = new CompoundNBT();
+        compoundNBT.putString("class", instance.getSupernaturalClass());
+        compoundNBT.putInt("power", instance.getPower());
+        return compoundNBT;
     }
 
     @Override
     public void readNBT(Capability<ISupernaturalClass> capability, ISupernaturalClass instance, Direction side, INBT nbt) {
-        instance.setSupernaturalClass((nbt).getString());
+        final CompoundNBT compoundNBT = (CompoundNBT) nbt;
+        instance.setSupernaturalClass(compoundNBT.getString("class"));
+        instance.set(compoundNBT.getInt("power"));
     }
 }
