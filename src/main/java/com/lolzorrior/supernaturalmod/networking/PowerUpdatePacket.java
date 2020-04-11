@@ -50,7 +50,6 @@ public class PowerUpdatePacket {
                 LOGGER.info("This isn't the server!");
                 return;
             }
-
             ISupernaturalClass sclass = sender.getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new);
             String stringClass = sclass.getSupernaturalClass();
             if (stringClass.equals("Human")) {

@@ -1,6 +1,5 @@
 package com.lolzorrior.supernaturalmod;
 
-
 import com.lolzorrior.supernaturalmod.networking.supernaturalPacketHndler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -21,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 
 import java.util.stream.Collectors;
+
 
 
 @Mod(SupernaturalMod.MOD_ID)
@@ -89,22 +89,4 @@ public class SupernaturalMod {
         }
     }
 
-    //@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-    //public static class ModEventSubscriber {
-
-
-        /*@SubscribeEvent
-        public static void onPlayerClone(PlayerEvent.Clone event){
-            LazyOptional<ISupernaturalClass> oldClass = event.getOriginal().getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS);
-            LazyOptional<ISupernaturalClass> newClass = event.getPlayer().getCapability(SupernaturalClassProvider.SUPERNATURAL_CLASS);
-            LazyOptional<ISupernaturalPower> oldPower = event.getOriginal().getCapability(SupernaturalPowerProvider.POWER_CAP);
-            LazyOptional<ISupernaturalPower> newPower = event.getPlayer().getCapability(SupernaturalPowerProvider.POWER_CAP);
-
-            //ISupernaturalClass oClass = oldCinst.orElse(new SupernaturalClass());
-            //ISupernaturalPower oPower = oldPinst.orElse(new SupernaturalPower());
-            //ISupernaturalClass nClass = newCinst.orElse(new SupernaturalClass());
-            //ISupernaturalPower nPower = newPinst.orElse(new SupernaturalPower());
-            //event.getPlayer().sendMessage(new StringTextComponent("Player Cloned! New Class:" + newClass.getSupernaturalClass()));
-        }*/
-    //}
 }

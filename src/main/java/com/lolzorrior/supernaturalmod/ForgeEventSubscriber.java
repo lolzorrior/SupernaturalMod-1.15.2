@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
@@ -17,10 +18,12 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Finish;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -77,10 +80,8 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        PlayerEntity player = event.getPlayer();
-        LazyOptional<ISupernaturalClass> sclassCapability = player.getCapability(SUPERNATURAL_CLASS);
-        ISupernaturalClass supernaturalClass = sclassCapability.orElseThrow(NullPointerException::new);
-        supernaturalPacketHndler.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), supernaturalClass);
+        ISupernaturalClass oSupernaturalClass = event.getOriginal().getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new);
+        supernaturalPacketHndler.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)event.getPlayer()), oSupernaturalClass);
     }
 
     @SubscribeEvent
@@ -94,13 +95,23 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public void onPlayerEatsFlesh(LivingEntityUseItemEvent.Finish event) {
+
+        if (!event.getEntityLiving().world.isRemote()) {
+            return;
+        }
         if (!(event.getEntityLiving() instanceof PlayerEntity)) {
             return;
         }
-        if (!event.getEntityLiving().isHandActive()){
+        if (!(event.getItem().getItem() == Items.ROTTEN_FLESH)) {
             return;
         }
+
+        LivingEntity player = event.getEntityLiving();
         int powerToAdd = 50;
         supernaturalPacketHndler.channel.sendToServer(new PowerUpdatePacket(powerToAdd));
     }
+
+
+    //@SubscribeEvent
+    //public void onZombieTargetsZombie(EntityMobGriefingEvent)
 }
