@@ -57,12 +57,12 @@ public class PowerUpdatePacket {
             String stringClass = sclass.getSupernaturalClass();
             if (stringClass.equals("Human")) {
                 sclass.setSupernaturalClass(msg.sClass);
+                sender.sendMessage(new StringTextComponent("Your class is now: " + sclass.getSupernaturalClass()));
             }
             else if (stringClass.equals(msg.sClass)) {
                 sclass.fill(msg.power);
+                sender.sendMessage(new StringTextComponent("Your power is now: " + sclass.getPower()));
             }
-            sender.sendMessage(new StringTextComponent("Your class is now: " + sclass.getSupernaturalClass()));
-            sender.sendMessage(new StringTextComponent("Your power is now: " + sclass.getPower()));
             LOGGER.info("Power Updated: " + sclass.getPower());
         });
         ctx.get().setPacketHandled(true);
