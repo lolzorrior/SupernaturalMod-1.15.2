@@ -23,21 +23,24 @@ import static com.lolzorrior.supernaturalmod.capabilities.SupernaturalClassProvi
 public class PowerUpdatePacket {
     private static final Logger LOGGER = LogManager.getLogger();
     int power = 0;
+    String sClass = "";
 
     public PowerUpdatePacket(){}
 
-    public PowerUpdatePacket(int input) {
+    public PowerUpdatePacket(int input, String classInput) {
         power = input;
+        sClass = classInput;
     }
 
     public static void encode(PowerUpdatePacket msg, PacketBuffer buf) {
         buf.writeInt(msg.power);
+        buf.writeString(msg.sClass);
         LOGGER.info("Encoding Power: " + msg.power);
     }
 
     public static PowerUpdatePacket decode(PacketBuffer buf) {
         LOGGER.info("Decoding Power");
-        return new PowerUpdatePacket(buf.readInt());
+        return new PowerUpdatePacket(buf.readInt(), buf.readString());
     }
 
     public static void handle(PowerUpdatePacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -53,9 +56,9 @@ public class PowerUpdatePacket {
             ISupernaturalClass sclass = sender.getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new);
             String stringClass = sclass.getSupernaturalClass();
             if (stringClass.equals("Human")) {
-                sclass.setSupernaturalClass("Zombie");
+                sclass.setSupernaturalClass(msg.sClass);
             }
-            else if (stringClass.equals("Zombie")) {
+            else if (stringClass.equals(msg.sClass)) {
                 sclass.fill(msg.power);
             }
             sender.sendMessage(new StringTextComponent("Your class is now: " + sclass.getSupernaturalClass()));
