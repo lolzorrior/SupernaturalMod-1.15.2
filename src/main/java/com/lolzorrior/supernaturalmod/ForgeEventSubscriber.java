@@ -126,7 +126,6 @@ public class ForgeEventSubscriber {
         LivingEntity player = event.getEntityLiving().getAttackingEntity();
         int powerToAdd = 50;
         if (!(event.getEntityLiving() instanceof IMob)) {
-            event.getEntityLiving().getAttackingEntity().sendMessage(new StringTextComponent("Not undead?"));
             return;
         }
         if (!(event.getEntityLiving().getLastDamageSource().isProjectile())) {
@@ -210,7 +209,6 @@ public class ForgeEventSubscriber {
             player.getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
             player.sendMessage(new StringTextComponent("Updated Power: " + (player.getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new).getPower())));
             player.sendMessage(new StringTextComponent("Your class is " + player.getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()));
-            player.sendMessage(new StringTextComponent("The world is " + event.getEntityLiving().world.isRemote()));
         }
     }
 
@@ -265,10 +263,6 @@ public class ForgeEventSubscriber {
         }
         LivingEntity player = event.getEntityLiving().getAttackingEntity();
         int powerToAdd = 50;
-        if (!(event.getEntityLiving() instanceof IMob)) {
-            event.getEntityLiving().getAttackingEntity().sendMessage(new StringTextComponent("Not undead?"));
-            return;
-        }
         if (!(event.getEntityLiving().getAttackingEntity().getActiveItemStack().isEmpty())) {
             player.sendMessage(new StringTextComponent("Hand isn't empty."));
             return;
@@ -283,7 +277,6 @@ public class ForgeEventSubscriber {
             player.getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new).setSupernaturalClass(setClass);
             player.sendMessage(new StringTextComponent("Updated Power: " + (player.getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new).getPower())));
             player.sendMessage(new StringTextComponent("Your class is " + player.getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new).getSupernaturalClass()));
-            player.sendMessage(new StringTextComponent("The world is " + event.getEntityLiving().world.isRemote()));
         }
     }
 
@@ -299,9 +292,33 @@ public class ForgeEventSubscriber {
             return;
         }
         event.setCanceled(true);
-        if(!((WolfEntity) event.getSource().getTrueSource()).isTamed()) {
+        ((WolfEntity) event.getEntityLiving()).setAngry(false);
+        /*if(!((WolfEntity) event.getSource().getTrueSource()).isTamed()) {
             ((WolfEntity) event.getSource().getTrueSource()).setTamed(true);
             ((WolfEntity) event.getSource().getTrueSource()).setTamedBy((PlayerEntity) event.getEntityLiving());
+
+        }*/
+    }
+
+    @SubscribeEvent
+    public void wolfTargetingEvent(LivingSetAttackTargetEvent event) {
+        if (!(event.getEntity() instanceof WolfEntity)) {
+            return;
         }
+        if (!(event.getTarget() instanceof PlayerEntity)) {
+            return;
+        }
+        if (!(event.getTarget().getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new).getSupernaturalClass().equals("Werewolf"))) {
+            return;
+        }
+        event.getEntityLiving().setRevengeTarget(null);
+        ((WolfEntity) event.getEntityLiving()).setAttackTarget(null);
+
+        /*if (event.getTarget() instanceof PlayerEntity) {
+            if (event.getTarget().getCapability(SUPERNATURAL_CLASS).orElseThrow(NullPointerException::new).equals("Werewolf")) {
+                 event.getEntityLiving().setRevengeTarget(null);
+                ((WolfEntity) event.getEntityLiving()).setAttackTarget(null);
+            }
+        }*/
     }
 }
